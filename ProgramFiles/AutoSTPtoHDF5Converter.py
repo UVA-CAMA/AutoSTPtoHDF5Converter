@@ -58,13 +58,15 @@ def converter(inputfile):
         os.remove(paths[0])
 
         logger.info(f'Moving {filebase}s HDF5, Zipped XML, and Zipped Log files to output folder...')
-        zipfile.ZipFile(paths[6], mode='w', compression=zipfile.ZIP_DEFLATED,
-                        allowZip64=True, compresslevel=9).write(paths[5], os.path.basename(paths[5]))
-        os.remove(paths[5])
+
         for handler in list(logger.handlers):
             logger.removeHandler(handler)
             handler.flush()
             handler.close()
+
+        zipfile.ZipFile(paths[6], mode='w', compression=zipfile.ZIP_DEFLATED,
+                        allowZip64=True, compresslevel=9).write(paths[5], os.path.basename(paths[5]))
+        os.remove(paths[5])
         for startpath in [paths[1], paths[3], paths[6]]:
             shutil.move(startpath, inputparentpath)
 
