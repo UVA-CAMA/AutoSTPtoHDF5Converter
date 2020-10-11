@@ -132,6 +132,7 @@ dmypy.json
 *.Stp
 *.hdf5
 *.log
+*.log.zip
 *.xml
 *.xml.zip
 
