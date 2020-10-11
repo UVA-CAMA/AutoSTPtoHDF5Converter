@@ -24,7 +24,7 @@ def converter(inputfile):
 
     paths = [processfilestructure + '.xml', processfilestructure + '.xml.zip', inputfilestructure + '.xml.zip',
              processfilestructure + '.hdf5', inputfilestructure + '.hdf5', processfilestructure + '.log',
-             inputfilestructure + '.log']
+             processfilestructure + '.log.zip', inputfilestructure + '.log.zip']
     for path in paths:
         if os.path.isfile(path):
             os.remove(path)
@@ -57,12 +57,15 @@ def converter(inputfile):
         logger.info(f'Deleting {filebase}.xml file...')
         os.remove(paths[0])
 
-        logger.info(f'Moving {filebase}s HDF5, Zipped XML, and Log files to output folder...')
+        logger.info(f'Moving {filebase}s HDF5, Zipped XML, and Zipped Log files to output folder...')
+        zipfile.ZipFile(paths[6], mode='w', compression=zipfile.ZIP_DEFLATED,
+                        allowZip64=True, compresslevel=9).write(paths[5], os.path.basename(paths[5]))
+        os.remove(paths[5])
         for handler in list(logger.handlers):
             logger.removeHandler(handler)
             handler.flush()
             handler.close()
-        for startpath in [paths[1], paths[3], paths[5]]:
+        for startpath in [paths[1], paths[3], paths[6]]:
             shutil.move(startpath, inputparentpath)
 
     except Exception as er:
