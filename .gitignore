@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Medical Files
+*.Stp
+*.hdf5
+*.log
+*.xml
+*.xml.zip
