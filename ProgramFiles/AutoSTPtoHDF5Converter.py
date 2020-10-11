@@ -10,7 +10,7 @@ import time
 import zipfile
 
 sleeptime = 60
-slowcpusizecutoff = 1.25e9
+slowcpusizecutoff = 7e9
 basedir = os.path.dirname(os.getcwd())
 processingpath = os.path.join(basedir, 'Processing')
 
