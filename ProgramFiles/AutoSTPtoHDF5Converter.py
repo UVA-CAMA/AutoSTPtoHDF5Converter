@@ -42,7 +42,6 @@ def converter(inputfile):
     logger.addHandler(logging.FileHandler(paths[5]))
     logger.setLevel(logging.INFO)
     logger.propagate = False
-    pathstomove = [paths[3], paths[6]]
 
     try:
         logger.info(f'File path is: {inputfile}')
@@ -69,7 +68,6 @@ def converter(inputfile):
             logger.info(f'Zipping up {filebase}.xml...')
             zipfile.ZipFile(paths[1], mode='w', compression=zipfile.ZIP_DEFLATED,
                             allowZip64=True, compresslevel=9).write(paths[0], os.path.basename(paths[0]))
-            pathstomove = [paths[1]] + pathstomove
 
         logger.info(f'Deleting {filebase}.xml file...')
         os.remove(paths[0])
@@ -85,6 +83,7 @@ def converter(inputfile):
                         allowZip64=True, compresslevel=9).write(paths[5], os.path.basename(paths[5]))
         os.remove(paths[5])
 
+        pathstomove = glob.glob(inputfilestructure + '.*')
         for startpath in pathstomove:
             shutil.move(startpath, inputparentpath)
 
