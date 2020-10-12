@@ -1,3 +1,4 @@
+import argparse
 import concurrent.futures
 import datetime
 import glob
@@ -13,6 +14,14 @@ sleeptime = 60
 slowcpusizecutoff = 7e9
 basedir = os.path.dirname(os.getcwd())
 processingpath = os.path.join(basedir, 'Processing')
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-nzx', '--no_zip_xml', help='Do not zip and save XML. Delete it only.', action='store_true')
+parser.add_argument('-s', '--system', help='Specify system that you are using. Carescape is default.(u = Unity, '
+                                           'p = Philips Classic, cs = Carescape, pix = Philips PIICiX)', type=str,
+                    choices=['u', 'p', 'cs', 'pix'])
+parser.add_argument('-w', '--wave_data', help='Include wavedata', action='store_true')
+args = parser.parse_args()
 
 
 def converter(inputfile):
@@ -33,14 +42,20 @@ def converter(inputfile):
     logger.addHandler(logging.FileHandler(paths[5]))
     logger.setLevel(logging.INFO)
     logger.propagate = False
+    pathstomove = [paths[3], paths[6]]
 
     try:
         logger.info(f'File path is: {inputfile}')
         logger.info(f'XML path is: {paths[0]}')
 
         logger.info(f'Starting to convert {filebase} from STP to XML...')
-        cmdoutput = subprocess.run(['StpToolkit.exe', inputfile, '-xw', '-blnk', '-cs', '-o', paths[0]],
-                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        stptoolkitparms = ['StpToolkit.exe', inputfile, '-xw', '-blnk', '-cs', '-o', paths[0]]
+        if args.wave_data:
+            stptoolkitparms.pop(2)
+            logger.info('Set to output wavedata as well.')
+        if args.system:
+            stptoolkitparms[4] = '-' + args.system
+        cmdoutput = subprocess.run(stptoolkitparms, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         logger.info(f'{cmdoutput.stdout} \n {cmdoutput.stderr} \n {cmdoutput.returncode}')
 
         logger.info(f'Starting to convert {filebase} from XML to HDF5...')
@@ -50,14 +65,16 @@ def converter(inputfile):
         logger.info(
             f'{cmdoutput.stdout} \n {cmdoutput.stderr} \n 'f'{cmdoutput.returncode}')
 
-        logger.info(f'Zipping up {filebase}.xml...')
-        zipfile.ZipFile(paths[1], mode='w', compression=zipfile.ZIP_DEFLATED,
-                        allowZip64=True, compresslevel=9).write(paths[0], os.path.basename(paths[0]))
+        if not args.no_zip_xml:
+            logger.info(f'Zipping up {filebase}.xml...')
+            zipfile.ZipFile(paths[1], mode='w', compression=zipfile.ZIP_DEFLATED,
+                            allowZip64=True, compresslevel=9).write(paths[0], os.path.basename(paths[0]))
+            pathstomove = [paths[1]] + pathstomove
 
         logger.info(f'Deleting {filebase}.xml file...')
         os.remove(paths[0])
 
-        logger.info(f'Moving {filebase}s HDF5, Zipped XML, and Zipped Log files to output folder...')
+        logger.info(f'Moving {filebase}s HDF5, Zipped XML (if applicable), and Zipped Log files to output folder...')
 
         for handler in list(logger.handlers):
             logger.removeHandler(handler)
@@ -67,7 +84,8 @@ def converter(inputfile):
         zipfile.ZipFile(paths[6], mode='w', compression=zipfile.ZIP_DEFLATED,
                         allowZip64=True, compresslevel=9).write(paths[5], os.path.basename(paths[5]))
         os.remove(paths[5])
-        for startpath in [paths[1], paths[3], paths[6]]:
+
+        for startpath in pathstomove:
             shutil.move(startpath, inputparentpath)
 
     except Exception as er:
