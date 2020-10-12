@@ -83,7 +83,7 @@ def converter(inputfile):
                         allowZip64=True, compresslevel=9).write(paths[5], os.path.basename(paths[5]))
         os.remove(paths[5])
 
-        pathstomove = glob.glob(inputfilestructure + '.*')
+        pathstomove = glob.glob(os.path.join(processingpath, filebase + '.*'))
         for startpath in pathstomove:
             shutil.move(startpath, inputparentpath)
 
