@@ -27,16 +27,6 @@ parser.add_argument('-d', '--delete_stp', help='Delete STP files if conversion i
 args = parser.parse_args()
 
 
-def cleanup():
-    zips = glob.glob(os.path.join(processingpath, '**', '*.zip'), recursive=True)
-    hdf = glob.glob(os.path.join(processingpath, '**', '*.hdf5'), recursive=True)
-    xml = glob.glob(os.path.join(processingpath, '**', '*.xml'), recursive=True)
-
-    for path in zips + hdf + xml:
-        if os.path.isfile(path):
-            os.remove(path)
-
-
 def converter(inputfile, timeout):
     processstarttime = time.time()
     inputparentpath = os.path.dirname(inputfile)
@@ -46,7 +36,8 @@ def converter(inputfile, timeout):
 
     paths = [processfilestructure + '.xml', processfilestructure + '.xml.zip', inputfilestructure + '.xml.zip',
              processfilestructure + '.hdf5', inputfilestructure + '.hdf5', processfilestructure + '.log',
-             processfilestructure + '.log.zip', inputfilestructure + '.log.zip']
+             processfilestructure + '.log.zip', inputfilestructure + '.log.zip',
+             os.path.join(processingpath, os.path.basename(inputfile))]
     for path in paths:
         if os.path.isfile(path):
             os.remove(path)
@@ -60,6 +51,8 @@ def converter(inputfile, timeout):
         logger.info(f'File path is: {inputfile}')
         logger.info(f'XML path is: {paths[0]}')
 
+        shutil.copy(inputfile, paths[8])
+
         logger.info(f'Starting to convert {filebase} from STP to XML...')
         stptoolkitparms = ['StpToolkit.exe', inputfile, '-xw', '-blnk', '-cs', '-o', paths[0]]
         if args.wave_data:
@@ -70,6 +63,8 @@ def converter(inputfile, timeout):
         cmdoutput = subprocess.run(stptoolkitparms, stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE, text=True, timeout=timeout)
         logger.info(f'{cmdoutput.stdout} \n {cmdoutput.stderr} \n {cmdoutput.returncode}')
+
+        os.remove(paths[8])
 
         logger.info(f'Starting to convert {filebase} from XML to HDF5...')
         formatconvertparms = ['formatconverter.exe', '-n', '-l', '-t', 'hdf5', '-p', '%d%i.%t', paths[0]]
