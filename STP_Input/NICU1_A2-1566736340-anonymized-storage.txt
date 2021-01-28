@@ -1,4 +1,0 @@
-C:\Users\Ayush\Desktop\Work\AutoSTPtoHDF5Converter\Processing\NICU1_A2-1566736340.xml
-Filename = C:\Users\Ayush\Desktop\Work\AutoSTPtoHDF5Converter\STP_Input\NICU1_A2-1566736340.Stp
-initial time offset = 0
-
