@@ -12,7 +12,7 @@ parser.add_argument('-d', '--database', help='Path to patient info database. ', 
 parser.add_argument('-s', '--system', help='Specify system that you are using. Default: Carescape. (u = Unity, '
                                            'p = Philips Classic, cs = Carescape, pix = Philips PIICiX)', type=str,
                     choices=['u', 'p', 'cs', 'pix'], default='cs')
-parser.add_argument('-w', '--wave_data', help='Include wavedata. Default: True', action='store_false')
+parser.add_argument('-w', '--wave_data', help='Include wavedata. Default: False', action='store_true')
 parser.add_argument('-del', '--delete_stp', help='Delete STP files if conversion if successful. Default: False',
                     action='store_true')
 parser.add_argument('-c', '--cores', help='Number of cores to use. Default: 6. ', type=int, default=6)
