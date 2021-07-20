@@ -1,4 +1,5 @@
 import os
+
 import pandas
 import sqlite3
 
@@ -24,5 +25,7 @@ def merge_files_w_patient_info(args, files):
          in zip(not_in_patient_database_files['Path'], not_in_patient_database_files['Filename'])]
 
     files_w_patient_info = files_w_patient_info.loc[~not_in_patient_database_boolean]
+
+    files_w_patient_info = files_w_patient_info.astype({'Offset': 'int64', 'PatientID': 'int64'})
 
     return files_w_patient_info

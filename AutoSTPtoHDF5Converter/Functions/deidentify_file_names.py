@@ -7,10 +7,10 @@ import pandas
 
 def deidentify_file_names(args, files_w_patient_info):
 
-    files_w_patient_info[['BedAndSeconds']] = files_w_patient_info['Filename'].str.split('.', expand=True)[0]
+    files_w_patient_info['BedAndSeconds'] = files_w_patient_info['Filename'].str.split('.', expand=True)[0]
 
     print("Getting the converted files...")
-    converted_files_list = glob.glob(os.path.join('Converted', '*.hdf5'))
+    converted_files_list = glob.glob(os.path.join(args.output, 'Converted', '*.hdf5'))
     if not converted_files_list:
         return None
 

@@ -4,7 +4,6 @@ import pathlib
 import configargparse
 from Functions import *
 
-
 parser = configargparse.ArgParser()
 parser.add_argument('-conf', '--my-config', is_config_file=True, help='Config file path')
 parser.add_argument('-i', '--input', help='Path to input files. ', type=str)
@@ -19,6 +18,8 @@ parser.add_argument('-del', '--delete_stp', help='Delete STP files if conversion
 parser.add_argument('-c', '--cores', help='Number of cores to use. Default: 6. ', type=int, default=6)
 parser.add_argument('-t', '--timeout', help='Number of hours to run conversions before timeout. Default: 10', type=int,
                     default=10)
+parser.add_argument('-r', '--retry_filesearch_time', help='Time, in seconds, to wait in between file searches. '
+                                                          'Default: 10 min/600 sec.', type=int, default=10 * 60)
 
 args = parser.parse_args()
 
@@ -34,14 +35,13 @@ if __name__ == '__main__':
 
     if not os.path.exists('Processing'):
         os.makedirs('Processing')
-    if not os.path.exists('Converted'):
-        os.makedirs('Converted')
+    if not os.path.isfile(os.path.join('Processing', '_.txt')):
+        pathlib.Path(os.path.join('Processing', '_.txt')).touch()
 
     if not os.path.isfile(os.path.join(args.input, '_.txt')):
         pathlib.Path(os.path.join(args.input, '_.txt')).touch()
     if not os.path.isfile(os.path.join(args.output, '_.txt')):
         pathlib.Path(os.path.join(args.input, '_.txt')).touch()
-
 
     while True:
         print("Starting new pass...")
