@@ -15,7 +15,7 @@ from Functions import *
 # Get the command line arguments and parse them
 parser = configargparse.ArgParser()
 parser.add_argument('-conf', '--my-config', is_config_file=True, help='Config file path')
-parser.add_argument('-i', '--input', help='Path to input files. ', type=str)
+parser.add_argument('-i', '--input', help='Path to input folder. ', type=str)
 parser.add_argument('-o', '--output', help='Path to output folder. ', type=str)
 parser.add_argument('-d', '--database', help='Path to patient info database. ', type=str)
 parser.add_argument('-du', '--database_update', help='Path to folder for patient database .CSV updates will be added.',
@@ -26,7 +26,7 @@ parser.add_argument('-s', '--system', help='Specify system that you are using. D
 parser.add_argument('-w', '--wave_data', help='Include wavedata. Default: False', action='store_true')
 parser.add_argument('-del', '--delete_stp', help='Delete .STP files if conversion if successful. Default: False',
                     action='store_true')
-parser.add_argument('-c', '--cores', help='Number of cores to use. Default: 6. ', type=int, default=6)
+parser.add_argument('-c', '--cores', help='Maximum number of cores to use. Default: 6. ', type=int, default=6)
 parser.add_argument('-t', '--timeout', help='Number of hours to run conversions before timeout. Default: 10 hours.',
                     type=int, default=10)
 parser.add_argument('-r', '--retry_filesearch_time', help='Time, in seconds, to wait in between file searches. '

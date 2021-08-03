@@ -46,9 +46,10 @@ def update_patient_database(args: argparse.Namespace) -> None:
             patient_info = pandas.concat([patient_info, pandas.read_csv(update_csv_file)], ignore_index=True)
             os.remove(update_csv_file)
 
-        # Drops NA in the STPFile, PatientID, and Offset columns and removes duplicates besides the first value in the
+        # Drops NA in the STPFile, PatientID, and Offset columns and removes duplicates besides the last value in the
         # STPFile column
-        patient_info = patient_info.dropna(subset=pi_columns).drop_duplicates(subset=[pi_columns[0]], ignore_index=True)
+        patient_info = patient_info.dropna(subset=pi_columns).drop_duplicates(subset=[pi_columns[0]], ignore_index=True,
+                                                                              keep='last')
         patient_info = patient_info[pi_columns]
 
         # If there is a difference between the original patient offset table and the new one (i.e. if any new offsets
